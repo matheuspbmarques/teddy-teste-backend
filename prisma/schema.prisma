@@ -17,7 +17,7 @@ model User {
   id                   String   @id @default(uuid())
   name                 String
   email                String
-  password_hashed      String
+  password             String
   refresh_token_hashed String?
   create_at            DateTime
   update_at            DateTime
