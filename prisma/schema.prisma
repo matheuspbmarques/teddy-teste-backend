@@ -18,7 +18,7 @@ model User {
   name                 String
   email                String
   password_hashed      String
-  refresh_token_hashed String
+  refresh_token_hashed String?
   create_at            DateTime
   update_at            DateTime
 
