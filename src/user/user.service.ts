@@ -28,13 +28,13 @@ export class UserService {
         } });
     };
 
-    async updateRefreshToken(userId: string, refreshTokenHashed: string): Promise<void> {
+    async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
         await this.prisma.user.update({
             where: {
                 id: userId
             },
             data: {
-                refresh_token_hashed: refreshTokenHashed
+                refresh_token: refreshToken
             }
         });
     };
