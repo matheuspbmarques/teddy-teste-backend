@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ShortenUrlDto } from "./dto/shorten-url.dto";
 import { Url } from "@prisma/client";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UrlService {
@@ -39,6 +40,16 @@ export class UrlService {
         return code;
     };
 
+    private async updateClicks(id: string, currentClicks: number): Promise<void> {
+        await this.prisma.url.update({
+            where: { id },
+            data: {
+                clicks: currentClicks + 1,
+                update_at: new Date()
+            }
+        });
+    };
+
     async shorten(userId: string | null, url: string): Promise<Url> {
         return await this.prisma.url.create({
             data: {
@@ -50,5 +61,17 @@ export class UrlService {
                 update_at: new Date(),
             }
         });
+    };
+
+    async getById(id: string): Promise<string> {
+        const url = await this.prisma.url.findFirst({ where: { id } });
+
+        if (!url) {
+            throw new HttpException('URL not found', HttpStatus.NOT_FOUND);
+        };
+
+        await this.updateClicks(url.id, url.clicks);
+
+        return url.origin;
     };
 };
