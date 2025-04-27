@@ -84,7 +84,17 @@ export class UrlService {
 
         return await this.prisma.url.findMany({
             where: {
-                userId
+                userId,
+                delete_at: null
+            }
+        });
+    };
+
+    async inactiveByIdAndUserId(userId: string, id: string) {
+        await this.prisma.url.update({
+            where: { userId, id },
+            data: {
+                delete_at: new Date()
             }
         });
     };

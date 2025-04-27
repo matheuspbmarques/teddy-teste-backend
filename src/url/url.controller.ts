@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Res, UseGuards } from "@nestjs/common";
 import { HeaderUserId } from "src/common/decoretors/header-user-id.decorator";
 import { OptionalAuthGuard } from "src/common/guards/optional-auth.guard";
 import { ShortenUrlDto } from "./dto/shorten-url.dto";
@@ -29,5 +29,12 @@ export class UrlController {
     @UseGuards(AuthGuard)
     async getByUserId(@HeaderUserId() userId: string) {
         return this.urlService.getByUserId(userId);
+    };
+
+    @Delete(':id')
+    @UseGuards(AuthGuard)
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async inactiveByIdAndUserId(@HeaderUserId() userId: string, @Param('id') id: string) {
+        await this.urlService.inactiveByIdAndUserId(userId, id);
     };
 };

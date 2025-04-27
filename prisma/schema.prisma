@@ -27,11 +27,12 @@ model User {
 }
 
 model Url {
-  id        String   @id @unique
+  id        String    @id @unique
   origin    String
   clicks    Int
   create_at DateTime
   update_at DateTime
+  delete_at DateTime?
   userId    String?
 
   user User? @relation(fields: [userId], references: [id])
