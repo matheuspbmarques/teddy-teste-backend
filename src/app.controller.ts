@@ -1,12 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Response } from 'express';
+import { UrlService } from './url/url.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private urlService: UrlService
+  ) { }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+  @Get(':id')
+  async redirect(@Param('id') id: string, @Res() res: Response) {
+    const origin = await this.urlService.getById(id);
+
+    res.redirect(origin);
+  };
 }

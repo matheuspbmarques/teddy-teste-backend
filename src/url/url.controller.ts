@@ -3,7 +3,6 @@ import { HeaderUserId } from "src/common/decoretors/header-user-id.decorator";
 import { OptionalAuthGuard } from "src/common/guards/optional-auth.guard";
 import { ShortenUrlDto } from "./dto/shorten-url.dto";
 import { UrlService } from "./url.service";
-import { Response } from "express";
 import { AuthGuard } from "src/common/guards/auth.guard";
 import { UpdateByIdAndUserIdDto } from "./dto/update-by-id-and-user-id-url.dto";
 
@@ -17,13 +16,6 @@ export class UrlController {
     @Post('/shorten')
     async shorten(@HeaderUserId() userId: string | null, @Body() { url }: ShortenUrlDto) {
         return await this.urlService.shorten(userId, url);
-    };
-
-    @Get('/shorten/:id')
-    async redirect(@Param('id') id: string, @Res() res: Response) {
-        const origin = await this.urlService.getById(id);
-
-        res.redirect(origin);
     };
 
     @Get()
