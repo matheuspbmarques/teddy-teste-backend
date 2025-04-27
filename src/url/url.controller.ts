@@ -4,6 +4,7 @@ import { OptionalAuthGuard } from "src/common/guards/optional-auth.guard";
 import { ShortenUrlDto } from "./dto/shorten-url.dto";
 import { UrlService } from "./url.service";
 import { Response } from "express";
+import { AuthGuard } from "src/common/guards/auth.guard";
 
 @Controller('/url')
 export class UrlController {
@@ -25,7 +26,8 @@ export class UrlController {
     };
 
     @Get()
-    async get(@Query() query: any) {
-        console.log(query);
+    @UseGuards(AuthGuard)
+    async getByUserId(@HeaderUserId() userId: string) {
+        return this.urlService.getByUserId(userId);
     };
 };

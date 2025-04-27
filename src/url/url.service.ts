@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ShortenUrlDto } from "./dto/shorten-url.dto";
 import { Url } from "@prisma/client";
@@ -73,5 +73,19 @@ export class UrlService {
         await this.updateClicks(url.id, url.clicks);
 
         return url.origin;
+    };
+
+    async getByUserId(userId: string): Promise<Array<Url>> {
+        const user = this.prisma.user.findFirst({ where: { id: userId } });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        };
+
+        return await this.prisma.url.findMany({
+            where: {
+                userId
+            }
+        });
     };
 };
