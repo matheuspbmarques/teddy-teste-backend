@@ -21,6 +21,20 @@ model User {
   refresh_token String?
   create_at     DateTime
   update_at     DateTime
+  Url           Url[]
 
   @@map("users")
+}
+
+model Url {
+  id        String   @id @unique
+  origin    String
+  clicks    Int
+  create_at DateTime
+  update_at DateTime
+  userId    String?
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("urls")
 }
