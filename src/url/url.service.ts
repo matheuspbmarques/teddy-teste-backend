@@ -3,11 +3,13 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { ShortenUrlDto } from "./dto/shorten-url.dto";
 import { Url } from "@prisma/client";
 import { ConfigService } from "@nestjs/config";
+import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class UrlService {
     constructor(
-        private prisma: PrismaService
+        private prisma: PrismaService,
+        private userService: UserService
     ) { };
 
     private generateRandomCode(): string {
@@ -22,8 +24,8 @@ export class UrlService {
         return codigo;
     };
 
-    private async urlExists(code: string): Promise<boolean> {
-        const url = await this.prisma.url.findFirst({ where: { id: code } });
+    private async urlExists(id: string): Promise<boolean> {
+        const url = await this.prisma.url.findFirst({ where: { id } });
 
         return url ? true : false;
     };
@@ -48,6 +50,10 @@ export class UrlService {
                 update_at: new Date()
             }
         });
+    };
+
+    private async userExists(userId: string): Promise<void> {
+        await this.userService.getById(userId);
     };
 
     async shorten(userId: string | null, url: string): Promise<Url> {
@@ -95,6 +101,25 @@ export class UrlService {
             where: { userId, id },
             data: {
                 delete_at: new Date()
+            }
+        });
+    };
+
+    async update(userId: string, id: string, url: string): Promise<Url> {
+        await this.userExists(userId);
+
+        if (!await this.urlExists(id)) {
+            throw new NotFoundException('URL not found');
+        };
+
+        return this.prisma.url.update({
+            where: {
+                userId,
+                id,
+                delete_at: null
+            },
+            data: {
+                origin: url
             }
         });
     };

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { User } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -37,5 +37,15 @@ export class UserService {
                 refresh_token: refreshToken
             }
         });
+    };
+
+    async getById(id: string): Promise<User> {
+        const user = await this.prisma.user.findFirst({ where: { id } });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        };
+
+        return user;
     };
 };
